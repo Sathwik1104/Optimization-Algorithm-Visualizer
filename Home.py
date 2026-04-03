@@ -1,50 +1,125 @@
 import streamlit as st
 import numpy as np
 import matplotlib.pyplot as plt
-import time
 
 st.set_page_config(
-    page_title="Optimization Algorithm Visualizer",
+    page_title="Optimization Portfolio",
     layout="wide",
-    page_icon="🚀"
+    initial_sidebar_state="expanded"
 )
 
-# ------------------ SIDEBAR ------------------
+# ----------- SIDEBAR PROFILE -----------
 with st.sidebar:
-    st.title("⚙️ Controls")
-    algorithm = st.selectbox(
-        "Select Algorithm",
-        ["Unconstrained Minimization",
-         "Pareto Front",
-         "Genetic Algorithm",
-         "Simulated Annealing"]
-    )
-
-    iterations = st.slider("Iterations", 10, 200, 50)
-    learning_rate = st.slider("Learning Rate", 0.01, 1.0, 0.1)
+    st.markdown("## 👨‍💻 G. Sathwik Reddy")
+    st.markdown("**Optimization Algorithm Visualizer**")
+    st.divider()
+    
+    st.markdown("### Profile")
+    st.write("**🎓 Institution:** KLH University")
+    st.write("**📚 Department:** ECE (Electronics & Communication)")
+    
+    st.divider()
+    st.markdown("### Expertise")
+    st.write("• Optimization Algorithms")
+    st.write("• Machine Learning & AI")
+    st.write("• Data Visualization")
+    
+    st.divider()
+    st.markdown("### Tech Stack")
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("🐍 Python")
+        st.write("🧮 NumPy")
+    with col2:
+        st.write("📊 Matplotlib")
+        st.write("⚡ Streamlit")
+    
+    st.divider()
+    st.markdown("### Portfolio")
+    st.write("📈 4 Optimization Algorithms")
+    st.write("🎯 Interactive Visualizations")
+    st.write("⚡ Dashboard UI")
+    
     st.markdown("---")
-    st.info("Adjust parameters and run the algorithm.")
+    st.markdown("""
+    <p style="color: #707080; font-size: 0.8rem; text-align: center;">
+    Built for Optimization Algorithms Project
+    </p>
+    """, unsafe_allow_html=True)
 
-# ------------------ HEADER ------------------
-st.title("🚀 Optimization Algorithm Visualizer")
-st.markdown("Interactive visualization of optimization algorithms")
+# ----------- CUSTOM CSS -----------
+st.markdown("""
+<style>
+.title {
+    font-size: 3rem;
+    font-weight: bold;
+    color: #00e6cc;
+}
+.subtitle {
+    color: #00bfa6;
+    font-size: 1.2rem;
+}
+.card {
+    padding: 20px;
+    border-radius: 15px;
+    background-color: #111827;
+    border: 1px solid #00e6cc;
+}
+.footer {
+    text-align: center;
+    color: gray;
+    font-size: 0.85rem;
+    margin-top: 40px;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ----------- HEADER -----------
+st.markdown('<p class="title">🚀 Optimization Portfolio</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle">Advanced Algorithm Visualizer & Performance Analyzer<br>By G. Sathwik Reddy</p>', unsafe_allow_html=True)
+
 st.markdown("---")
 
-# ------------------ TABS ------------------
-tab1, tab2, tab3, tab4 = st.tabs([
-    "📉 Unconstrained",
+# ----------- TABS -----------
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
+    "🏠 Home", 
+    "📉 Unconstrained Minimization", 
     "🎯 Pareto Front",
     "🧬 Genetic Algorithm",
     "🔥 Simulated Annealing"
 ])
 
-# =====================================================
-# TAB 1 — UNCONSTRAINED MINIMIZATION
-# =====================================================
+# ----------- HOME TAB -----------
 with tab1:
-    st.subheader("Gradient Descent Optimization")
+    st.header("Welcome to Optimization Algorithm Visualizer")
+    
+    st.success("This dashboard demonstrates Gradient Descent, Pareto Optimization, Genetic Algorithms, and Simulated Annealing with interactive visualizations.")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="card">
+        <h3>📉 Gradient-Based Methods</h3>
+        <p>Unconstrained minimization using gradient descent and optimization techniques.</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="card">
+        <h3>🧬 Metaheuristic Algorithms</h3>
+        <p>Genetic Algorithms, Simulated Annealing, and Pareto Optimization.</p>
+        </div>
+        """, unsafe_allow_html=True)
 
-    start = st.slider("Starting Point", -10.0, 10.0, 5.0)
+# ----------- UNCONSTRAINED TAB -----------
+with tab2:
+    st.header("Unconstrained Minimization - Gradient Descent")
+
+    lr = st.slider("Learning Rate", 0.01, 1.0, 0.1)
+    start = st.slider("Start Point", -10.0, 10.0, 5.0)
+    iterations = st.slider("Iterations", 10, 200, 50)
 
     def f(x):
         return x**2 + 4*x + 4
@@ -52,7 +127,7 @@ with tab1:
     def grad(x):
         return 2*x + 4
 
-    if st.button("Run Gradient Descent"):
+    if st.button("Run Optimization"):
         x_vals = np.linspace(-10, 10, 200)
         y_vals = f(x_vals)
 
@@ -60,34 +135,21 @@ with tab1:
         history = [x]
         loss_history = [f(x)]
 
-        progress = st.progress(0)
-        plot_placeholder = st.empty()
-
-        for i in range(iterations):
-            g = grad(x)
-            x = x - learning_rate * g
+        for _ in range(iterations):
+            x = x - lr * grad(x)
             history.append(x)
             loss_history.append(f(x))
 
-            fig, ax = plt.subplots()
-            ax.plot(x_vals, y_vals)
-            ax.scatter(history, loss_history, color="red")
-            ax.set_title("Optimization Path")
+        fig, ax = plt.subplots()
+        ax.plot(x_vals, y_vals)
+        ax.scatter(history, loss_history, color='red')
+        ax.set_title("Optimization Path")
 
-            plot_placeholder.pyplot(fig)
-            progress.progress((i + 1) / iterations)
-            time.sleep(0.05)
+        st.pyplot(fig)
 
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Final x", round(x, 4))
-        col2.metric("Final Loss", round(loss_history[-1], 4))
-        col3.metric("Iterations", iterations)
-
-# =====================================================
-# TAB 2 — PARETO FRONT
-# =====================================================
-with tab2:
-    st.subheader("Pareto Front Visualization")
+# ----------- PARETO TAB -----------
+with tab3:
+    st.header("Pareto Front Visualization")
 
     pop_size = st.slider("Population Size", 10, 100, 50)
     generations = st.slider("Generations", 10, 100, 30)
@@ -111,15 +173,12 @@ with tab2:
         ax.scatter(f1_vals, f2_vals)
         ax.set_xlabel("Objective 1")
         ax.set_ylabel("Objective 2")
-        ax.set_title("Pareto Front")
 
         st.pyplot(fig)
 
-# =====================================================
-# TAB 3 — GENETIC ALGORITHM
-# =====================================================
-with tab3:
-    st.subheader("Genetic Algorithm Optimization")
+# ----------- GENETIC ALGORITHM TAB -----------
+with tab4:
+    st.header("Genetic Algorithm")
 
     pop_size = st.slider("Population Size (GA)", 20, 200, 100)
     generations = st.slider("Generations (GA)", 10, 200, 50)
@@ -139,22 +198,17 @@ with tab3:
             probs = fit / np.sum(fit)
             idx = np.random.choice(pop_size, pop_size, p=probs)
             population = population[idx]
-
             population += np.random.normal(0, mutation_rate, population.shape)
 
         fig, ax = plt.subplots()
         ax.plot(best_history)
         ax.set_title("GA Convergence")
-        ax.set_xlabel("Generation")
-        ax.set_ylabel("Best Fitness")
 
         st.pyplot(fig)
 
-# =====================================================
-# TAB 4 — SIMULATED ANNEALING
-# =====================================================
-with tab4:
-    st.subheader("Simulated Annealing")
+# ----------- SIMULATED ANNEALING TAB -----------
+with tab5:
+    st.header("Simulated Annealing")
 
     temp = st.slider("Initial Temperature", 100, 1000, 500)
     cooling = st.slider("Cooling Rate", 0.90, 0.99, 0.95)
@@ -185,11 +239,13 @@ with tab4:
         fig, ax = plt.subplots()
         ax.plot(costs)
         ax.set_title("Simulated Annealing Convergence")
-        ax.set_xlabel("Iteration")
-        ax.set_ylabel("Cost")
 
         st.pyplot(fig)
 
-# ------------------ FOOTER ------------------
-st.markdown("---")
-st.markdown("Optimization Algorithm Visualizer • Streamlit Dashboard")
+# ----------- FOOTER -----------
+st.markdown("""
+<div class="footer">
+👨‍💻 <b>G. Sathwik Reddy</b> | Optimization Algorithm Visualizer<br>
+KLH University • Electronics & Communication Engineering
+</div>
+""", unsafe_allow_html=True)
